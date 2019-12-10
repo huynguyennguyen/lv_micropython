@@ -326,6 +326,13 @@ SRC_O += \
 endif
 endif
 
+ifeq ($(MICROPY_PY_LVGL), 1)
+LIB_SRC_C += \
+        lib/lv_bindings/driver/esp32/modlvesp32.c \
+	lib/lv_bindings/driver/esp32/modILI9341.c \
+	lib/lv_bindings/driver/esp32/modrtch.c
+endif
+
 SRC_HAL = $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
 	hal.c \
 	hal_adc.c \
