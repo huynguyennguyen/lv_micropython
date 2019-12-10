@@ -286,7 +286,7 @@ struct _mp_bluetooth_nimble_root_pointers_t;
 #define MICROPY_PORT_ROOT_POINTERS \
     LV_ROOTS \
     \
-    mp_obj_t machine-pin_irq_handler[40]; \
+    mp_obj_t machine_pin_irq_handler[40]; \
     \
     const char *readline_hist[8]; \
     \
