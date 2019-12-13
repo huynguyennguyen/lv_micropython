@@ -217,7 +217,7 @@ extern const struct _mp_obj_module_t mp_module_espif;
 extern const struct _mp_obj_module_t mp_module_lodepng;
 
 #if MICROPY_PY_STM
-#define STM_BUILTIN_MODULE               { MP_ROM_QSTR(MP_QSTR_stm), MP_ROM_PTR(&stm_module) },
+#define STM_BUILTIN_MODULE               { MP_ROM_QSTR(MP_QSTR_stm), MP_ROM_PTR(&stm_module) }, 
 #else
 #define STM_BUILTIN_MODULE
 #endif
@@ -229,6 +229,7 @@ extern const struct _mp_obj_module_t mp_module_lodepng;
 #else
 #define MICROPY_PORT_LVGL_DEF
 #endif
+
 
 #if MICROPY_PY_USOCKET && MICROPY_PY_LWIP
 // usocket implementation provided by lwIP
@@ -256,7 +257,7 @@ extern const struct _mp_obj_module_t mp_module_lodepng;
     SOCKET_BUILTIN_MODULE \
     NETWORK_BUILTIN_MODULE \
     { MP_ROM_QSTR(MP_QSTR__onewire), MP_ROM_PTR(&mp_module_onewire) }, \
-    MICROPY_PORT_LVGL_DEF
+    MICROPY_PORT_LVGL_DEF \
 
 // extra constants
 #define MICROPY_PORT_CONSTANTS \
