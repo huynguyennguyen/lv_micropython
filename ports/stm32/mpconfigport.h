@@ -84,7 +84,6 @@
 #define MICROPY_ENABLE_SCHEDULER    (1)
 #define MICROPY_SCHEDULER_DEPTH     (8)
 #define MICROPY_VFS                 (1)
-#define MICROPY_PY_LVGL		    (1)
 
 // control over Python builtins
 #define MICROPY_PY_FUNCTION_ATTRS   (1)
@@ -174,6 +173,7 @@
 #ifndef MICROPY_PY_NETWORK
 #define MICROPY_PY_NETWORK          (1)
 #endif
+#define MICROPY_PY_LVGL             (1)
 
 // fatfs configuration used in ffconf.h
 #define MICROPY_FATFS_ENABLE_LFN       (1)
@@ -212,13 +212,14 @@ extern const struct _mp_obj_module_t mp_module_network;
 extern const struct _mp_obj_module_t mp_module_onewire;
 extern const struct _mp_obj_module_t mp_module_lvgl;
 extern const struct _mp_obj_module_t mp_module_lvesp32;
-//extern const struct _mp_obj_module_t mp_module_ILI9341;
-extern const struct _mp_obj_module_t mp_module_rtch;
+extern const struct _mp_obj_module_t mp_module_rtch; 
+extern const struct _mp_obj_module_t mp_module_espif;
+extern const struct _mp_obj_module_t mp_module_lodepng;
 
-#if MICROPY_PY_LVGL
+#if MYCROPY_PY_LVGL
 #define MICROPY_PORT_LVGL_DEF \
-   { MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), (mp_obj_t)&mp_module_lvgl},  \
-   { MP_OBJ_NEW_QSTR(MP_QSTR_lvesp32), (mp_obj_t)&mp_module_lvesp32},
+   { MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), {mp_obj_t)&mp_module_lvgl } \
+   { MP_OBJ_NEW_QSTR(MP_QSTR_lvesp32), {mp_obj_t)&mp_module_lvesp32 },
 #else
 #define MICROPY_PORT_LVGL_DEF
 #endif
@@ -257,12 +258,6 @@ extern const struct _mp_obj_module_t mp_module_rtch;
     { MP_ROM_QSTR(MP_QSTR__onewire), MP_ROM_PTR(&mp_module_onewire) }, \
     MICROPY_PORT_LVGL_DEF
 
-#if MICROPY_PY_LVGL
-#include "lib/lv_bindings/lvgl/src/lv_misc/lv_gc.h"
-#else
-#define LV_ROOTS
-#endif
-
 // extra constants
 #define MICROPY_PORT_CONSTANTS \
     { MP_ROM_QSTR(MP_QSTR_umachine), MP_ROM_PTR(&machine_module) }, \
@@ -278,6 +273,12 @@ extern const struct _mp_obj_module_t mp_module_rtch;
 #define MICROPY_PORT_ROOT_POINTER_MBEDTLS
 #endif
 
+#if MICROPY_PY_LVGL
+#include "lib/lv_bindings/lvgl/src/lv_misc/lv_gc.h"
+#else
+#define LV_ROOTS
+#endif
+
 #if MICROPY_BLUETOOTH_NIMBLE
 struct _mp_bluetooth_nimble_root_pointers_t;
 #define MICROPY_PORT_ROOT_POINTER_BLUETOOTH_NIMBLE void **bluetooth_nimble_memory; struct _mp_bluetooth_nimble_root_pointers_t *bluetooth_nimble_root_pointers;
@@ -287,12 +288,9 @@ struct _mp_bluetooth_nimble_root_pointers_t;
 
 #define MICROPY_PORT_ROOT_POINTERS \
     LV_ROOTS \
-    \
     void *mp_lv_user_data; \
     \
     const char *readline_hist[8]; \
-    \
-    mp_obj_t machine_pin_irq_handler[40]; \
     \
     mp_obj_t pyb_hid_report_desc; \
     \
