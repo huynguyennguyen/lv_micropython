@@ -217,7 +217,8 @@ extern const struct _mp_obj_module_t mp_module_espif;
 extern const struct _mp_obj_module_t mp_module_lodepng;
 
 #if MICROPY_PY_STM
-#define STM_BUILTIN_MODULE               { MP_ROM_QSTR(MP_QSTR_stm), MP_ROM_PTR(&stm_module) }, 
+#define STM_BUILTIN_MODULE               { MP_ROM_QSTR(MP_QSTR_stm), MP_ROM_PTR(&stm_module) }, \
+   { MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), (mp_obj_t)&mp_module_lvgl }, 
 #else
 #define STM_BUILTIN_MODULE
 #endif
