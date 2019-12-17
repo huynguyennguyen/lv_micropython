@@ -575,6 +575,14 @@ ifeq ($(TEXT1_ADDR),0x90000000)
 	$(ECHO) "INFO: this build places firmware in external QSPI flash"
 endif
 
+# add support for lvgl
+ifeq ($(MICROPY_PY_LVGL), 1)
+LIB_SRC_C += \
+	lib/lv_bindings/driver/esp32/modlvesp32.c \
+	lib/lv_bindings/driver/esp32/modILI9341.c \
+	lib/lv_bindings/driver/esp32/modrtch.c
+endif
+
 PLLVALUES = boards/pllvalues.py
 MAKE_PINS = boards/make-pins.py
 BOARD_PINS = $(BOARD_DIR)/pins.csv
