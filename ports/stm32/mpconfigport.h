@@ -84,6 +84,7 @@
 #define MICROPY_ENABLE_SCHEDULER    (1)
 #define MICROPY_SCHEDULER_DEPTH     (8)
 #define MICROPY_VFS                 (1)
+#define MICROPY_PY_LVGL (1) //add lvgl
 
 // control over Python builtins
 #define MICROPY_PY_FUNCTION_ATTRS   (1)
@@ -209,9 +210,11 @@ extern const struct _mp_obj_module_t mp_module_utime;
 extern const struct _mp_obj_module_t mp_module_usocket;
 extern const struct _mp_obj_module_t mp_module_network;
 extern const struct _mp_obj_module_t mp_module_onewire;
+extern const struct _mp_obj_module_t mp_module_lvgl;
 
 #if MICROPY_PY_STM
-#define STM_BUILTIN_MODULE               { MP_ROM_QSTR(MP_QSTR_stm), MP_ROM_PTR(&stm_module) },
+#define STM_BUILTIN_MODULE               { MP_ROM_QSTR(MP_QSTR_stm), MP_ROM_PTR(&stm_module) }, \
+{ MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), (mp_obj_t)&mp_module_lvgl }, //add littlevGL
 #else
 #define STM_BUILTIN_MODULE
 #endif
@@ -233,6 +236,15 @@ extern const struct _mp_obj_module_t mp_module_onewire;
 #define NETWORK_BUILTIN_MODULE
 #endif
 
+#if MICROPY_PY_LVGL
+#define MICROPY_PORT_LVGL_DEF \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), (mp_obj_t)&mp_module_lvgl }, 
+//    { MP_OBJ_NEW_QSTR(MP_QSTR_lvesp32), (mp_obj_t)&mp_module_lvesp32 },
+//    { MP_OBJ_NEW_QSTR(MP_QSTR_ILI9341), (mp_obj_t)&mp_module_ILI9341 },
+//    { MP_OBJ_NEW_QSTR(MP_QSTR_xpt2046), (mp_obj_t)&mp_module_xpt2046 },
+#else
+#define MICROPY_PORT_LVGL_DEF
+#endif
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_ROM_QSTR(MP_QSTR_umachine), MP_ROM_PTR(&machine_module) }, \
     { MP_ROM_QSTR(MP_QSTR_pyb), MP_ROM_PTR(&pyb_module) }, \
@@ -242,6 +254,7 @@ extern const struct _mp_obj_module_t mp_module_onewire;
     SOCKET_BUILTIN_MODULE \
     NETWORK_BUILTIN_MODULE \
     { MP_ROM_QSTR(MP_QSTR__onewire), MP_ROM_PTR(&mp_module_onewire) }, \
+   MICROPY_PORT_LVGL_DEF \
 
 // extra constants
 #define MICROPY_PORT_CONSTANTS \
@@ -251,6 +264,12 @@ extern const struct _mp_obj_module_t mp_module_onewire;
     STM_BUILTIN_MODULE \
 
 #define MP_STATE_PORT MP_STATE_VM
+
+#if MICROPY_PY_LVGL
+#include "lib/lv_bindings/lvgl/src/lv_misc/lv_gc.h"
+#else
+#define LV_ROOTS
+#endif
 
 #if MICROPY_SSL_MBEDTLS
 #define MICROPY_PORT_ROOT_POINTER_MBEDTLS void **mbedtls_memory;
@@ -266,7 +285,9 @@ struct _mp_bluetooth_nimble_root_pointers_t;
 #endif
 
 #define MICROPY_PORT_ROOT_POINTERS \
-    const char *readline_hist[8]; \
+LV_ROOTS \
+    void *mp_lv_user_data; \
+const char *readline_hist[8]; \
     \
     mp_obj_t pyb_hid_report_desc; \
     \
